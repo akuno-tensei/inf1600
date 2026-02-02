@@ -25,13 +25,35 @@ palindrome:
     #####################################################
 
     # Votre code ici
+    xor %ecx, %ecx
+    loop_length:
+        cmpb $0, (%esi, %ecx, 1)
+        je end_length
+        inc %ecx
+        jmp loop_length
+        
+    end_length:
+        dec %ecx  # ECX = longueur - 1
 
+    cmp $0, %ecx
+    je is_pallindrome  # Une chaine avec 0 ou 1 caractère est un palindrome
 
+    loop_pallindrome:
+        xor %edx, %edx
+        mov (%esi, %ecx, 1), %al
+        mov (%esi, %edx, 1), %bl
+        cmp %al, %bl
+        jne not_pallindrome
+        inc %edx
+        dec %ecx
+        cmp %edx, %ecx
+        jl loop_pallindrome
+        
     # TODO: Votre algo
   
 
     # TODO: placer le résultat du calcul dans %eax avant de quitter le programme (avant l'épilogue)
-
+    
 
 
 
@@ -41,3 +63,9 @@ fin:
     leave
     ret
 
+not_pallindrome:
+    movl $0, %eax  # Faux
+    jmp fin
+is_pallindrome:
+    movl $1, %eax  # Vrai
+    jmp fin

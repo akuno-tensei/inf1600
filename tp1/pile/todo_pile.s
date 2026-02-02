@@ -45,7 +45,18 @@ inverser_pile:
     #####################################################
 
     # Votre code ici
+    popl %eax
+    popl %ebx
+    popl %ecx
+    popl %edx
+    popl %r8
+    popl %esi
+    popl %edi
+    popl %ebp
 
+    movl %r8, %esp
+
+    pusha
     # TODO: Votre algo
 
     #####################################################
