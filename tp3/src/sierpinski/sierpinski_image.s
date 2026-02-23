@@ -32,11 +32,19 @@ L’appel de la fonction dans le main sera ainsi : sierpinskiImage(0, 0, 1024, i
 sierpinskiImage:
     # prologue
     pushl   %ebp                      
-    movl    %esp, %ebp                  
+    movl    %esp, %ebp  
+
+    pushl %ebx
+    pushl %edi
+    pushl %esi                
 
     # TODO
 
     # epilogue
+    popl %esi
+    popl %edi
+    popl %ebx
+
     leave 
     ret   
 

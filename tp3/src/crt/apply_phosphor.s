@@ -31,11 +31,19 @@ percent_conversion:
 applyPhosphor:
     # prologue
     pushl   %ebp                      
-    movl    %esp, %ebp                  
+    movl    %esp, %ebp     
+
+    pushl %ebx
+    pushl %edi
+    pushl %esi          
 
     # TODO
 
     # epilogue
+    popl %esi
+    popl %edi
+    popl %ebx
+    
     leave 
     ret   
 

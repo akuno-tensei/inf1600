@@ -18,11 +18,37 @@ percent_conversion:
 applyScanline:
     # prologue
     pushl   %ebp                      
-    movl    %esp, %ebp                  
+    movl    %esp, %ebp   
+
+    pushl %ebx
+    pushl %edi
+    pushl %esi
 
     # TODO
+    movl 8(%ebp), %ebx
+
+    xor %ecx, %ecx
+    movl $3, %ecx
+
+    boucle:
+        movl -1(%ebx, %ecx, 4), %eax # charge la valeur d'une composante RGB dans %eax
+
+        xor %edx, %edx # initialisation de %edx pour la multiplication
+        mull 12(%ebp) # multiplier par le percent passé en paramètre
+
+        xor %edx, %edx # initialisation de %edx pour la division
+        movl $100, %esi # diviseur placé dans %edi
+        divl %esi # division
+
+        movl %eax, -1(%ebx, %ecx, 4) # remplacer la composante RGB par sa nouvelle valeur
+
+        loop boucle
    
     # epilogue
+    popl %esi
+    popl %edi
+    popl %ebx
+
     leave 
     ret   
 
