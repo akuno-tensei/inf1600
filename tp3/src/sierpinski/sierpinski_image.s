@@ -59,7 +59,7 @@ sierpinskiImage:
         jne recursive
 
         # dessiner un pixel
-        movl 24(%ebp), %ebx # img
+        movl 8(%ebx), %ebx # img.pixels
         movl (%ebx, %esi, 4), %ebx # img.pixels[y]
         movl (%ebx, %edi, 4), %ebx # img.pixels[y][x]
 
