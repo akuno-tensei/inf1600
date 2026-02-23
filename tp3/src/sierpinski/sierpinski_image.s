@@ -39,7 +39,7 @@ sierpinskiImage:
     pushl %esi                
 
     # TODO
-
+    
     # epilogue
     popl %esi
     popl %edi
