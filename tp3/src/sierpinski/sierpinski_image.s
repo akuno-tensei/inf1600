@@ -63,12 +63,9 @@ sierpinskiImage:
         movl (%ebx, %esi, 4), %ebx # img.pixels[y]
         movl (%ebx, %edi, 4), %ebx # img.pixels[y][x]
 
-        movl 24(%ebp), %eax # color.red
-        movl %eax, (%ebx) # img.pixels[y][x] = color.red
-        movl 28(%ebp), %eax # color.green
-        movl %eax, 4(%ebx) # img.pixels[y][x] = color.green
-        movl 32(%ebp), %eax # color.blue
-        movl %eax, 8(%ebx) # img.pixels[y][x] = color.blue
+        movl 24(%ebp), %eax # color
+        movl %eax, (%ebx) # img.pixels[y][x] = color
+
 
     # epilogue
     fin:
@@ -85,9 +82,6 @@ sierpinskiImage:
         pushl %edx
 
         # paremètres de l'appel récursif pour le triangle en bas à gauche
-        pushl 36(%ebp) # color
-        pushl 32(%ebp) # color
-        pushl 28(%ebp) # color
         pushl 24(%ebp) # color
         pushl 20(%ebp) # img
 
@@ -101,7 +95,7 @@ sierpinskiImage:
         pushl %edi # x
 
         call sierpinskiImage # Triangle en bas à gauche
-        addl $40, %esp # nettoyage de la pile après l'appel
+        addl $16, %esp # nettoyage de la pile après l'appel
 
         popl %edx
         popl %ecx
@@ -114,9 +108,6 @@ sierpinskiImage:
         pushl %edx
 
         # paremètres de l'appel récursif pour le triangle en bas à droite
-        pushl 36(%ebp) # color
-        pushl 32(%ebp) # color
-        pushl 28(%ebp) # color
         pushl 24(%ebp) # color
         pushl 20(%ebp) # img
 
@@ -132,7 +123,7 @@ sierpinskiImage:
         pushl %edx # x + half
 
         call sierpinskiImage # Triangle en bas à gauche
-        addl $40, %esp # nettoyage de la pile après l'appel
+        addl $16, %esp # nettoyage de la pile après l'appel
 
         popl %edx
         popl %ecx
@@ -145,9 +136,6 @@ sierpinskiImage:
         pushl %edx
 
         # paremètres de l'appel récursif pour le triangle du haut
-        pushl 36(%ebp) # color
-        pushl 32(%ebp) # color
-        pushl 28(%ebp) # color
         pushl 24(%ebp) # color
         pushl 20(%ebp) # img
 
@@ -164,7 +152,7 @@ sierpinskiImage:
         pushl %edx # x
 
         call sierpinskiImage # Triangle en bas à gauche
-        addl $40, %esp # nettoyage de la pile après l'appel
+        addl $16, %esp # nettoyage de la pile après l'appel
 
         popl %edx
         popl %ecx
