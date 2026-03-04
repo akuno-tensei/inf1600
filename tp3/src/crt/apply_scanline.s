@@ -37,7 +37,7 @@ applyScanline:
         xor %edx, %edx # initialisation de %edx pour la multiplication
         mull 12(%ebp) # multiplier par le percent passé en paramètre
 
-        movl $100, %esi # diviseur placé dans %edi
+        movl percent_conversion, %esi # diviseur placé dans %edi
         divl %esi # division
 
         movb %al, -1(%ebx, %ecx, 1) # remplacer la composante RGB par sa nouvelle valeur
