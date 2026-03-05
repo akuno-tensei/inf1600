@@ -39,7 +39,7 @@ crtFilter:
 
     # TODO
     movl 8(%ebp), %ebx # adresse de l'image img
-    movl less_color, %edi 
+    movl 12(%ebp), %edi
 
     movl 4(%ebx), %ecx # img.hauteur
     dec %ecx # ajustement pour l'indexation à partir de n-1
@@ -51,11 +51,22 @@ crtFilter:
         boucleColonnes:
             xor %edx, %edx # initialisation de %edx pour la multiplication
             movl %ecx, %eax # y
-            divl scanlineSpacing # division pour vérifier si y est un multiple de scanlineSpacing
+            divl %edi # division pour vérifier si y est un multiple de scanlineSpacing
             cmp $0, %edx
-            je appliquer_scanline
+            jne appliquer_phosphor
+            
+            appliquer_scanline:
+            	movl less_color, %edi
+                pushl %edi # percent pour applyScanline
 
-            # appliquer_phosphor
+                movl 8(%ebx), %eax # adresse de img.pixels
+                movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
+                lea (%eax, %esi, 4), %eax 
+                pushl %eax          # adresse de img.pixels[y][x] (pixel à modifier)
+
+                call applyScanline
+                addl $8, %esp # nettoyage de la pile après l'appel
+
             appliquer_phosphor:
                 movl %esi, %eax # y
                 xor %edx, %edx # initialisation de %edx pour la division
@@ -69,34 +80,20 @@ crtFilter:
 
                 call applyPhosphor
                 addl $8, %esp # nettoyage de la pile après l'appel
-                jmp next_boucleColonnes
 
-            appliquer_scanline:
-                pushl %edi # percent pour applyScanline
+            subl $1, %esi # décrémenter la largeur restante
+            cmp $0, %esi
+            jge boucleColonnes
 
-                movl 8(%ebx), %eax # adresse de img.pixels
-                movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
-                lea (%eax, %esi, 4), %eax 
-                pushl %eax          # adresse de img.pixels[y][x] (pixel à modifier)
-
-                call applyScanline
-                addl $8, %esp # nettoyage de la pile après l'appel
-                
-
-            next_boucleColonnes:
-                dec %esi # décrémenter la largeur restante
-                cmp $-1, %esi
-                jne boucleColonnes
-
-        next_boucleLignes:
-            dec %ecx # décrémenter la hauteur restante
-            cmp $-1, %ecx
-            jne boucleLignes
+        subl $1, %ecx # décrémenter la hauteur restante
+        cmp $0, %ecx
+        jge boucleLignes
+        
     # epilogue
-fin:
     popl %esi
     popl %edi
     popl %ebx
+    
     leave 
     ret 
 
