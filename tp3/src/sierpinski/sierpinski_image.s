@@ -75,6 +75,9 @@ sierpinskiImage:
         ret   
 
     recursive:
+        movl 16(%ebp), %eax # size
+        shrl $1, %eax # half = size / 2
+
         pushl %eax
         pushl %ecx
         pushl %edx
@@ -82,15 +85,13 @@ sierpinskiImage:
         # paremètres de l'appel récursif pour le triangle en bas à gauche
         pushl 24(%ebp) # color
         pushl 20(%ebp) # img
+        pushl %eax # half
 
-        shrl $1, %eax # half = size / 2
-        pushl %eax # half = size / 2
-
-        movl %esi, %edx # y
+        movl 12(%ebp), %edx # y
         addl %eax, %edx # y + half
-        pushl %edx # y + half
+        pushl %edx
 
-        pushl %edi # x
+        pushl 8(%ebp) # x
 
         call sierpinskiImage # Triangle en bas à gauche
         addl $20, %esp # nettoyage de la pile après l'appel
@@ -108,15 +109,13 @@ sierpinskiImage:
         # paremètres de l'appel récursif pour le triangle en bas à droite
         pushl 24(%ebp) # color
         pushl 20(%ebp) # img
+        pushl %eax # half
 
-        shrl $1, %eax # half = size / 2
-        pushl %eax # half = size / 2
-
-        movl %esi, %edx # y
+        movl 12(%ebp), %edx # y
         addl %eax, %edx # y + half
         pushl %edx # y + half
 
-        movl %edi, %edx # x
+        movl 8(%ebp), %edx # x
         addl %eax, %edx # x + half
         pushl %edx # x + half
 
@@ -136,18 +135,16 @@ sierpinskiImage:
         # paremètres de l'appel récursif pour le triangle du haut
         pushl 24(%ebp) # color
         pushl 20(%ebp) # img
+        pushl %eax # half
 
-        shrl $1, %eax # half = size / 2
-        pushl %eax # half = size / 2
-
-        movl %esi, %edx # y
+        movl 12(%ebp), %edx # y
         addl %eax, %edx # y + half
-        pushl %edx # y + half
+        pushl %edx
 
         movl %edi, %edx # x
         shrl $1, %eax # half / 2
         addl %eax, %edx # x + half / 2
-        pushl %edx # x
+        pushl %edx
 
         call sierpinskiImage # Triangle en bas à gauche
         addl $20, %esp # nettoyage de la pile après l'appel
