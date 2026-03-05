@@ -31,12 +31,76 @@ percent_conversion:
 applyPhosphor:
     # prologue
     pushl   %ebp                      
-    movl    %esp, %ebp     
+    movl    %esp, %ebp
+
+    pushl %ebx
+    pushl %edi
+    pushl percent_conversion     
 
     # TODO
+    movl 8(%ebp), %ebx # adresse du pixel p
+    movl 12(%ebp), %edi # subpixel
+    
+    xor %eax, %eax # initialisation de %eax
+
+    cmp $0, %edi
+    je rouge_conserve
+
+    cmp $1, %edi
+    je vert_conserve
+
+    # bleu_conserve
+    bleu_conserve:
+        # réduire rouge et vert à 70 %
+        movb (%ebx), %al # rouge
+        xor %edx, %edx
+        mull factor
+        divl percent_conversion
+        movb %al, (%ebx) # rouge réduit
+
+        movb 1(%ebx), %al # vert
+        xor %edx, %edx
+        mull factor
+        divl percent_conversion
+        movb %al, 1(%ebx) # vert réduit
+        jmp fin
+
+    #rouge_conserve:
+    rouge_conserve:
+       # réduire vert et bleu à 70 %
+        movb 1(%ebx), %al # vert
+        xor %edx, %edx
+        mull factor
+        divl percent_conversion
+        movb %al, 1(%ebx) # vert réduit
+
+        movb 2(%ebx), %al # bleu
+        xor %edx, %edx
+        mull factor
+        divl percent_conversion
+        movb %al, 2(%ebx) # bleu réduit
+        jmp fin
+
+    #vert_conserve:
+    vert_conserve:
+        # réduire rouge et bleu à 70 %
+        movb (%ebx), %al # rouge
+        xor %edx, %edx
+        mull factor
+        divl percent_conversion
+        movb %al, (%ebx) # rouge réduit
+
+        movb 2(%ebx), %al # bleu
+        xor %edx, %edx
+        mull factor
+        divl percent_conversion
+        movb %al, 2(%ebx) # bleu réduit
 
     # epilogue
-
+    fin:
+    popl %esi
+    popl %edi
+    popl %ebx
     leave 
     ret   
 

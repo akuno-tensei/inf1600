@@ -61,11 +61,9 @@ sierpinskiImage:
         # dessiner un pixel
         movl 8(%ebx), %ebx # img.pixels
         movl (%ebx, %esi, 4), %ebx # img.pixels[y]
-        movl (%ebx, %edi, 4), %ebx # img.pixels[y][x]
 
         movl 24(%ebp), %eax # color
-        movl %eax, (%ebx) # img.pixels[y][x] = color
-
+        movl %eax, (%ebx, %edi, 4) # img.pixels[y][x] = color
 
     # epilogue
     fin:
@@ -95,7 +93,7 @@ sierpinskiImage:
         pushl %edi # x
 
         call sierpinskiImage # Triangle en bas à gauche
-        addl $16, %esp # nettoyage de la pile après l'appel
+        addl $20, %esp # nettoyage de la pile après l'appel
 
         popl %edx
         popl %ecx
@@ -123,7 +121,7 @@ sierpinskiImage:
         pushl %edx # x + half
 
         call sierpinskiImage # Triangle en bas à gauche
-        addl $16, %esp # nettoyage de la pile après l'appel
+        addl $20, %esp # nettoyage de la pile après l'appel
 
         popl %edx
         popl %ecx
@@ -152,7 +150,7 @@ sierpinskiImage:
         pushl %edx # x
 
         call sierpinskiImage # Triangle en bas à gauche
-        addl $16, %esp # nettoyage de la pile après l'appel
+        addl $20, %esp # nettoyage de la pile après l'appel
 
         popl %edx
         popl %ecx

@@ -33,10 +33,67 @@ crtFilter:
     # prologue
     pushl   %ebp                      
     movl    %esp, %ebp       
+    pushl %ebx
+    pushl %edi
+    pushl %esi
 
     # TODO
-   
+    movl 8(%ebp), %ebx # adresse de l'image img
+    movl 12(%ebp), %edi # scanlineSpacing
+
+    movl 4(%ebx), %ecx # img.hauteur
+    dec %ecx # ajustement pour l'indexation à partir de n-1
+
+    boucleLignes:
+        movl (%ebx), %esi # img.largeur
+        dec %esi # ajustement pour l'indexation à partir de n-1
+
+        boucleColonnes:
+            xor %edx, %edx # initialisation de %edx pour la multiplication
+            movl %ecx, %eax # y
+            divl %edi # division pour vérifier si y est un multiple de scanlineSpacing
+            cmp $0, %edx
+            je appliquer_scanline
+
+            # appliquer_phosphor
+            appliquer_phosphor:
+                movl %esi, %eax # y
+                xor %edx, %edx # initialisation de %edx pour la division
+                divl max_index # division pour déterminer le subpixel
+                pushl %edx # subpixel pour applyPhosphor
+
+                movl 8(%ebx), %eax # adresse de img.pixels
+                movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
+                pushl (%eax, %esi, 4) # adresse de img.pixels[y][x] (pixel à modifier)
+
+                call applyScanline
+                addl $8, %esp # nettoyage de la pile après l'appel
+
+            appliquer_scanline:
+                pushl less_color # percent pour applyScanline
+
+                movl 8(%ebx), %eax # adresse de img.pixels
+                movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
+                pushl (%eax, %esi, 4) # adresse de img.pixels[y][x] (pixel à modifier)
+
+                call applyPhosphor
+                addl $8, %esp # nettoyage de la pile après l'appel
+                jmp next_boucleColonnes
+
+            next_boucleColonnes:
+                dec %esi # décrémenter la largeur restante
+                cmp $-1, %esi
+                jne boucleColonnes
+
+        next_boucleLignes:
+            dec %ecx # décrémenter la hauteur restante
+            cmp $-1, %ecx
+            jne boucleLignes
     # epilogue
+fin:
+    popl %esi
+    popl %edi
+    popl %ebx
     leave 
     ret 
 
