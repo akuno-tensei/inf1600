@@ -64,7 +64,8 @@ crtFilter:
 
                 movl 8(%ebx), %eax # adresse de img.pixels
                 movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
-                pushl (%eax, %esi, 4) # adresse de img.pixels[y][x] (pixel à modifier)
+                lea (%eax, %esi, 4), %eax 
+                pushl %eax          # adresse de img.pixels[y][x] (pixel à modifier)
 
                 call applyScanline
                 addl $8, %esp # nettoyage de la pile après l'appel
@@ -74,7 +75,8 @@ crtFilter:
 
                 movl 8(%ebx), %eax # adresse de img.pixels
                 movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
-                pushl (%eax, %esi, 4) # adresse de img.pixels[y][x] (pixel à modifier)
+                lea (%eax, %esi, 4), %eax 
+                pushl %eax          # adresse de img.pixels[y][x] (pixel à modifier)
 
                 call applyPhosphor
                 addl $8, %esp # nettoyage de la pile après l'appel
