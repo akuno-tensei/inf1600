@@ -35,7 +35,7 @@ applyPhosphor:
 
     pushl %ebx
     pushl %edi
-    pushl percent_conversion     
+    pushl %esi     
 
     # TODO
     movl 8(%ebp), %ebx # adresse du pixel p
