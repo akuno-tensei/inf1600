@@ -40,29 +40,28 @@ sierpinskiImage:
 
     # TODO
     bornes:
-        movl 8(%ebp), %edi # x
-        movl 12(%ebp), %esi # y
+        movl 8(%ebp), %edi         # x
+        movl 12(%ebp), %esi        # y
+        movl 20(%ebp), %ebx        # img
 
-        movl 20(%ebp), %ebx # img
-
-        movl (%ebx), %eax # img.largeur
+        movl (%ebx), %eax          # img.largeur
         cmp %eax, %edi
         jge fin
 
-        movl 4(%ebx), %eax # img.hauteur
+        movl 4(%ebx), %eax         # img.hauteur
         cmp %eax, %esi
         jge fin
 
     cas_base:
-        movl 16(%ebp), %eax # size
+        movl 16(%ebp), %eax        # size
         cmp $1, %eax
         jne recursive
 
         # dessiner un pixel
-        movl 8(%ebx), %ebx # img.pixels
+        movl 8(%ebx), %ebx         # img.pixels
         movl (%ebx, %esi, 4), %ebx # img.pixels[y]
 
-        movl 24(%ebp), %eax # color
+        movl 24(%ebp), %eax        # color
         movl %eax, (%ebx, %edi, 4) # img.pixels[y][x] = color
 
     # epilogue
@@ -75,85 +74,48 @@ sierpinskiImage:
         ret   
 
     recursive:
-        movl 16(%ebp), %eax # size
-        shrl $1, %eax # half = size / 2
+        movl 16(%ebp), %eax     # size
+        shrl $1, %eax           # half = size / 2
+        movl %eax, %ebx         
 
-        pushl %eax
-        pushl %ecx
-        pushl %edx
+        # --- Triangle en bas à gauche ---
+        # sierpinskiImage(x, y + half, half, img, color)
+        pushl 24(%ebp)          # color
+        pushl 20(%ebp)          # img
+        pushl %ebx              # half
+        movl 12(%ebp), %ecx     # y
+        addl %ebx, %ecx         # ecx = y + half
+        pushl %ecx              # push y + half
+        pushl 8(%ebp)           # x
+        call sierpinskiImage
+        addl $20, %esp          # nettoyage de la pile après l'appel
 
-        # paremètres de l'appel récursif pour le triangle en bas à gauche
-        pushl 24(%ebp) # color
-        pushl 20(%ebp) # img
-        pushl %eax # half
+        # --- Triangle en bas à droite ---
+        # sierpinskiImage(x + half, y + half, half, img, color)
+        pushl 24(%ebp)          # color
+        pushl 20(%ebp)          # img
+        pushl %ebx              # half
+        movl 12(%ebp), %ecx     # y
+        addl %ebx, %ecx         # ecx = y + half
+        pushl %ecx              # push y + half
+        movl 8(%ebp), %edx      # x
+        addl %ebx, %edx         # edx = x + half
+        pushl %edx              # push x + half
+        call sierpinskiImage
+        addl $20, %esp          # nettoyage de la pile après l'appel
 
-        movl 12(%ebp), %edx # y
-        addl %eax, %edx # y + half
-        pushl %edx
+        # sierpinskiImage(x + half/2, y, half, img, color)
+        pushl 24(%ebp)          # color
+        pushl 20(%ebp)          # img
+        pushl %ebx              # half
+        pushl 12(%ebp)          # y (on utilise l'original ici !)
 
-        pushl 8(%ebp) # x
-
-        call sierpinskiImage # Triangle en bas à gauche
-        addl $20, %esp # nettoyage de la pile après l'appel
-
-        popl %edx
-        popl %ecx
-        popl %eax
-
-####################################################################################
-
-        pushl %eax
-        pushl %ecx
-        pushl %edx
-
-        # paremètres de l'appel récursif pour le triangle en bas à droite
-        pushl 24(%ebp) # color
-        pushl 20(%ebp) # img
-        pushl %eax # half
-
-        movl 12(%ebp), %edx # y
-        addl %eax, %edx # y + half
-        pushl %edx # y + half
-
-        movl 8(%ebp), %edx # x
-        addl %eax, %edx # x + half
-        pushl %edx # x + half
-
-        call sierpinskiImage # Triangle en bas à gauche
-        addl $20, %esp # nettoyage de la pile après l'appel
-
-        popl %edx
-        popl %ecx
-        popl %eax
-
-####################################################################################
-
-        pushl %eax
-        pushl %ecx
-        pushl %edx
-
-        # paremètres de l'appel récursif pour le triangle du haut
-        pushl 24(%ebp) # color
-        pushl 20(%ebp) # img
-        pushl %eax # half
-
-        movl 12(%ebp), %edx # y
-        addl %eax, %edx # y + half
-        pushl %edx
-
-        movl %edi, %edx # x
-        shrl $1, %eax # half / 2
-        addl %eax, %edx # x + half / 2
-        pushl %edx
-
-        call sierpinskiImage # Triangle en bas à gauche
-        addl $20, %esp # nettoyage de la pile après l'appel
-
-        popl %edx
-        popl %ecx
-        popl %eax
-
-####################################################################################
+        movl %ebx, %eax         # eax = half
+        shrl $1, %eax           # eax = half / 2
+        addl 8(%ebp), %eax      # eax = x + half / 2
+        pushl %eax              # push x + half/2
+        call sierpinskiImage
+        addl $20, %esp          # nettoyage de la pile après l'appel
 
         jmp fin
 
