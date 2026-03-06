@@ -38,54 +38,65 @@ crtFilter:
     pushl %esi
 
     # TODO
-    movl 8(%ebp), %ebx # adresse de l'image img
-    movl 12(%ebp), %edi
+    movl 8(%ebp), %ebx  # adresse de l'image img
 
-    movl 4(%ebx), %ecx # img.hauteur
-    dec %ecx # ajustement pour l'indexation à partir de n-1
+    movl 4(%ebx), %ecx  # img.hauteur
+    dec %ecx            # ajustement pour l'indexation à partir de n-1
 
     boucleLignes:
-        movl (%ebx), %esi # img.largeur
-        dec %esi # ajustement pour l'indexation à partir de n-1
+        movl (%ebx), %esi   # img.largeur
+        dec %esi            # ajustement pour l'indexation à partir de m-1
 
         boucleColonnes:
-            xor %edx, %edx # initialisation de %edx pour la multiplication
-            movl %ecx, %eax # y
-            divl %edi # division pour vérifier si y est un multiple de scanlineSpacing
+            xor %edx, %edx      # initialisation de %edx pour la multiplication
+            movl %ecx, %eax     # y
+            movl 12(%ebp), %edi # scanlineSpacing
+            divl %edi           # division pour vérifier si y est un multiple de scanlineSpacing
+
             cmp $0, %edx
             jne appliquer_phosphor
             
             appliquer_scanline:
-            	movl less_color, %edi
-                pushl %edi # percent pour applyScanline
+                pushl %ecx
 
-                movl 8(%ebx), %eax # adresse de img.pixels
+            	movl less_color, %edi
+
+                pushl %edi                 # percent pour applyScanline
+
+                movl 8(%ebx), %eax
                 movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
-                lea (%eax, %esi, 4), %eax 
-                pushl %eax          # adresse de img.pixels[y][x] (pixel à modifier)
+                lea (%eax, %esi, 4), %eax  # adresse de img.pixels[y][x] (pixel à modifier)
+                pushl %eax             
 
                 call applyScanline
-                addl $8, %esp # nettoyage de la pile après l'appel
+                addl $8, %esp              # nettoyage de la pile après l'appel
+
+                popl %ecx
 
             appliquer_phosphor:
-                movl %esi, %eax # y
-                xor %edx, %edx # initialisation de %edx pour la division
-                divl max_index # division pour déterminer le subpixel
-                pushl %edx # subpixel pour applyPhosphor
+                pushl %ecx
 
-                movl 8(%ebx), %eax # adresse de img.pixels
+                movl %esi, %eax            # y
+                xor %edx, %edx             # initialisation de %edx pour la division
+                divl max_index             # division pour déterminer le subpixel
+
+                pushl %edx                 # subpixel pour applyPhosphor
+
+                movl 8(%ebx), %eax
                 movl (%eax, %ecx, 4), %eax # adresse de img.pixels[y]
-                lea (%eax, %esi, 4), %eax 
-                pushl %eax          # adresse de img.pixels[y][x] (pixel à modifier)
+                lea (%eax, %esi, 4), %eax  # adresse de img.pixels[y][x] (pixel à modifier)
+                pushl %eax         
 
                 call applyPhosphor
-                addl $8, %esp # nettoyage de la pile après l'appel
+                addl $8, %esp              # nettoyage de la pile après l'appel
 
-            subl $1, %esi # décrémenter la largeur restante
+                popl %ecx
+
+            dec %esi                  # décrémenter la largeur restante
             cmp $0, %esi
             jge boucleColonnes
 
-        subl $1, %ecx # décrémenter la hauteur restante
+        dec %ecx                      # décrémenter la hauteur restante
         cmp $0, %ecx
         jge boucleLignes
         
