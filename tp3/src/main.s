@@ -13,15 +13,15 @@
 .data 
 
 inputCrt: 
-    .asciz "images/sunny.jpeg"
+    .asciz "images/sample.bmp"
 
 outputCrt:
-    .asciz "crt_sunny.jpeg"
+    .asciz "crt_sample.bmp"
 
 outputSierpinski:
     .asciz "sierpinski.png"
 
-scanlineSpacing: .int 2
+scanlineSpacing: .int 1
 
 hauteur: .int 520
 
