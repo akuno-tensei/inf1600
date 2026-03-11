@@ -13,13 +13,30 @@
 .data 
 
 inputCrt: 
-    .asciz "images/cat.png"
+    .asciz "images/sunny.jpeg"
 
 outputCrt:
-    .asciz "crt_cat.png"
+    .asciz "crt_sunny.jpeg"
 
 outputSierpinski:
     .asciz "sierpinski.png"
+
+scanlineSpacing: .int 2
+
+hauteur: .int 520
+
+largeur: .int 520
+
+size: .int 512
+
+x: .int 4
+
+y: .int 4
+
+pixel: .int 0xE3AB3BFF
+
+
+
 
 
 .text 
@@ -45,8 +62,9 @@ main:
     pushl %ecx
     pushl %edx
 
-    pushl %ebx
-    lea inputCrt, %edi # nom de l'image à charger
+    pushl %ebx         # Image
+
+    lea inputCrt, %edi 
     pushl %edi
 
     call loadImage
@@ -64,7 +82,7 @@ main:
     pushl %ecx
     pushl %edx
 
-    movl $2, %edi # scanlineSpacing
+    movl scanlineSpacing, %edi
     pushl %edi
     pushl %ebx 
 
@@ -80,8 +98,9 @@ main:
     pushl %ecx
     pushl %edx
 
-    pushl %ebx 
-    lea outputCrt, %edi # nom de l'image transformée
+    pushl %ebx          # Image
+
+    lea outputCrt, %edi 
     pushl %edi
 
     call saveImage
@@ -118,10 +137,13 @@ main:
     pushl %ecx
     pushl %edx
 
-    movl $1024, %edi
+    movl largeur, %edi
     pushl %edi
+
+    movl hauteur, %edi
     pushl %edi
-    pushl %ebx
+
+    pushl %ebx          # Image
 
     call createImage
     add $12, %esp
@@ -135,14 +157,19 @@ main:
     pushl %ecx
     pushl %edx
 
-    movl $0xE3AB3BFF, %edi # Pixel
+    movl pixel, %edi    
     pushl %edi
-    pushl %ebx             # Img
-    movl $1204, %edi       # size
+
+    pushl %ebx            # Image
+
+    movl size, %edi      
     pushl %edi
-    xor %edi, %edi
-    pushl %edi             # y = 0
-    pushl %edi             # x = 0
+
+    movl y, %edi     
+    pushl %edi
+
+    movl x, %edi       
+    pushl %edi            
 
     call sierpinskiImage
 
@@ -155,8 +182,9 @@ main:
     pushl %ecx
     pushl %edx
 
-    pushl %ebx 
-    lea outputSierpinski, %edi # nom de l'image transformée
+    pushl %ebx                 # Image
+
+    lea outputSierpinski, %edi 
     pushl %edi
 
     call saveImage
