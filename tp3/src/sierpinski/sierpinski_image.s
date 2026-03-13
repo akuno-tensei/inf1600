@@ -78,7 +78,7 @@ sierpinskiImage:
         shrl $1, %eax           # half = size / 2
         movl %eax, %ebx         
 
-        # --- Triangle en bas à gauche ---
+        # Triangle en bas à gauche
         # sierpinskiImage(x, y + half, half, img, color)
         pushl 24(%ebp)          # color
         pushl 20(%ebp)          # img
@@ -88,9 +88,9 @@ sierpinskiImage:
         pushl %ecx              # push y + half
         pushl 8(%ebp)           # x
         call sierpinskiImage
-        addl $20, %esp          # nettoyage de la pile après l'appel
+        addl $20, %esp  
 
-        # --- Triangle en bas à droite ---
+        # Triangle en bas à droite
         # sierpinskiImage(x + half, y + half, half, img, color)
         pushl 24(%ebp)          # color
         pushl 20(%ebp)          # img
@@ -102,20 +102,21 @@ sierpinskiImage:
         addl %ebx, %edx         # edx = x + half
         pushl %edx              # push x + half
         call sierpinskiImage
-        addl $20, %esp          # nettoyage de la pile après l'appel
+        addl $20, %esp 
 
+        # Triangle en haut
         # sierpinskiImage(x + half/2, y, half, img, color)
         pushl 24(%ebp)          # color
         pushl 20(%ebp)          # img
         pushl %ebx              # half
-        pushl 12(%ebp)          # y (on utilise l'original ici !)
+        pushl 12(%ebp)          # y
 
         movl %ebx, %eax         # eax = half
         shrl $1, %eax           # eax = half / 2
         addl 8(%ebp), %eax      # eax = x + half / 2
         pushl %eax              # push x + half/2
         call sierpinskiImage
-        addl $20, %esp          # nettoyage de la pile après l'appel
+        addl $20, %esp   
 
         jmp fin
 
