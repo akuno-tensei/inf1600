@@ -13,10 +13,10 @@
 .data 
 
 inputCrt: 
-    .asciz "images/sample.bmp"
+    .asciz "images/woman.png"
 
 outputCrt:
-    .asciz "crt_sample.bmp"
+    .asciz "crt_woman.png"
 
 outputSierpinski:
     .asciz "sierpinski.png"
@@ -53,9 +53,8 @@ main:
 
     #################### Filtre CRT #######################
 
-    subl $12, %esp # Allocation de 3 octets dans la pile pour l'image
-    movl %esp, %ebx 
-    addl $8, %ebx # adresse de l'image
+    subl $12, %esp   # Allocation de 3 octets dans la pile pour l'image
+    movl %esp, %ebx  # adresse de l'image
 
     # TODO: Charger l'image inputCrt en appelant loadImage()
     pushl %eax
@@ -126,9 +125,8 @@ main:
 
     #################### Triangle de Sierpinski #######################
 
-    subl $12, %esp # Allocation de 3 octets dans la pile pour l'image
-    movl %esp, %ebx 
-    addl $8, %ebx # adresse de l'image
+    subl $12, %esp   # Allocation de 3 octets dans la pile pour l'image
+    movl %esp, %ebx  # adresse de l'image
 
     # TODO: Créer une image vide de taille d'une puissance de 2 en appelant createImage()
     # Puisque createImage() retourne une struct Image, il faut d’abord allouer de l’espace sur la pile pour l’image, puit push l’adresse de cet espace comme 3e paramètre avant de call la fonction.
